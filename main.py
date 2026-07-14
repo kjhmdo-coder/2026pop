@@ -18,7 +18,7 @@ st.markdown("궁금한 지역과 인구 구조가 가장 비슷한 지역을 찾
 # -----------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("population.csv", encoding="utf-8-sig")
+    df = pd.read_csv("202606_202606_연령별인구현황_월간.csv", encoding="utf-8-sig")
     return df
 
 df = load_data()
