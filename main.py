@@ -18,8 +18,21 @@ st.markdown("궁금한 지역과 인구 구조가 가장 비슷한 지역을 찾
 # -----------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("202606_202606_연령별인구현황_월간.csv", encoding="utf-8-sig")
-    return df
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, "202606_202606_연령별인구현황_월간.csv")
+
+    encodings_to_try = ["cp949", "euc-kr", "utf-8-sig", "utf-8"]
+
+    for enc in encodings_to_try:
+        try:
+            df = pd.read_csv(file_path, encoding=enc)
+            st.success(f"파일을 '{enc}' 인코딩으로 성공적으로 불러왔습니다.")
+            return df
+        except UnicodeDecodeError:
+            continue
+
+    st.error("모든 인코딩 시도에 실패했습니다. 파일 인코딩을 확인해주세요.")
+    st.stop()
 
 df = load_data()
 
