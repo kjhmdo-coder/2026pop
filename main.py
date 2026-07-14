@@ -17,6 +17,10 @@ st.markdown("궁금한 지역과 인구 구조가 가장 비슷한 지역을 찾
 # -----------------------------
 # 데이터 로드
 # -----------------------------
+import os
+import streamlit as st
+import pandas as pd
+
 @st.cache_data
 def load_data():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -36,16 +40,15 @@ def load_data():
         st.error("모든 인코딩 시도에 실패했습니다.")
         st.stop()
 
-    # 숫자 열에 포함된 쉼표(,) 제거 후 숫자형으로 변환
+    # 쉼표 제거 후 숫자 변환
     for col in df.columns:
         if df[col].dtype == object:
             df[col] = df[col].astype(str).str.replace(",", "", regex=False)
-            df[col] = pd.to_numeric(df[col], errors="ignore")
+            df[col] = pd.to_numeric(df[col], errors="coerce")  # ✅ "ignore" → "coerce"
 
     return df
 
 df = load_data()
-
 # 지역 컬럼명 (데이터에 맞게 수정 필요)
 region_col = "지역"
 
