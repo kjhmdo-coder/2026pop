@@ -24,16 +24,25 @@ def load_data():
 
     encodings_to_try = ["cp949", "euc-kr", "utf-8-sig", "utf-8"]
 
+    df = None
     for enc in encodings_to_try:
         try:
             df = pd.read_csv(file_path, encoding=enc)
-            st.success(f"파일을 '{enc}' 인코딩으로 성공적으로 불러왔습니다.")
-            return df
+            break
         except UnicodeDecodeError:
             continue
 
-    st.error("모든 인코딩 시도에 실패했습니다. 파일 인코딩을 확인해주세요.")
-    st.stop()
+    if df is None:
+        st.error("모든 인코딩 시도에 실패했습니다.")
+        st.stop()
+
+    # 숫자 열에 포함된 쉼표(,) 제거 후 숫자형으로 변환
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = df[col].astype(str).str.replace(",", "", regex=False)
+            df[col] = pd.to_numeric(df[col], errors="ignore")
+
+    return df
 
 df = load_data()
 
